@@ -36,3 +36,5 @@
     </ul>
   </article>
 </section>
+
+<x-application props-json='<%= @props %>' ></x-application>
