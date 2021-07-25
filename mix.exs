@@ -44,7 +44,9 @@ defmodule GluonExample.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:ash_postgres, "~> 0.40.9"},
+      {:ash, "~> 1.47"}
     ]
   end
 

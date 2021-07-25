@@ -30,7 +30,7 @@ defmodule Gluon.Core.Channel do
   end
 
   @impl true
-  def handle_info(%Broadcast{topic: _, event: _, payload: payload}, socket) do
+  def handle_info(%Broadcast{topic: _, event: "changed", payload: payload}, socket) do
     broadcast(socket, "update", payload)
     {:noreply, socket}
   end

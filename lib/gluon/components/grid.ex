@@ -1,6 +1,6 @@
 defmodule Gluon.Components.Grid do
   def subscribe_to() do
-    ["gluon:users"]
+    ["gluon:Elixir.GluonExample.User", "gluon:Elixir.GluonExample.Tweet"]
   end
 
   def get(_params) do
