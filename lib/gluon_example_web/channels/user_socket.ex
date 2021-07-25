@@ -3,6 +3,7 @@ defmodule GluonExampleWeb.UserSocket do
 
   ## Channels
   # channel "room:*", GluonExampleWeb.RoomChannel
+  channel "gluon:*", Gluon.Core.Channel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
