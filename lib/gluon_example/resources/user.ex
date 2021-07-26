@@ -7,14 +7,15 @@ defmodule GluonExample.User do
   end
 
   attributes do
-    attribute :email, :string,
+    attribute(:email, :string,
       allow_nil?: false,
       constraints: [
         # Note: This regex is just an example
         match: ~r/^[\w.!#$%&’*+\-\/=?\^`{|}~]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$/i
       ]
+    )
 
-    uuid_primary_key :id
+    uuid_primary_key(:id)
   end
 
   relationships do
@@ -22,9 +23,9 @@ defmodule GluonExample.User do
   end
 
   actions do
-    create :create
-    read :read
-    update :update
-    destroy :destroy
+    create(:create)
+    read(:read, pagination: [offset?: true])
+    update(:update)
+    destroy(:destroy)
   end
 end

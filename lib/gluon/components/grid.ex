@@ -1,9 +1,12 @@
 defmodule Gluon.Components.Grid do
-  def subscribe_to() do
-    ["gluon:Elixir.GluonExample.User", "gluon:Elixir.GluonExample.Tweet"]
-  end
+  @callback sort() :: String.t()
 
-  def get(_params) do
-    {:ok, [1, 2, 3]}
+  defmacro __using__(opts \\ []) do
+    quote do
+      opts = unquote(opts)
+      @behaviour unquote(__MODULE__)
+
+      import unquote(__MODULE__)
+    end
   end
 end

@@ -22,7 +22,7 @@ defmodule Gluon.Core.Channel do
   @impl true
   def handle_out("update", _msg, socket) do
     unless socket.assigns[:no_updates] do
-      {:ok, resp} = call_module(socket, "get", %{})
+      {:ok, resp} = call_module(socket, "data", %{})
       push(socket, "update", %{data: resp})
     end
 
@@ -42,11 +42,11 @@ defmodule Gluon.Core.Channel do
   defp subscribe_to_updates(socket) do
     apply(module(socket), :subscribe_to, [])
     |> Enum.each(fn topic ->
-      :ok = GluonExampleWeb.Endpoint.subscribe(topic)
+      :ok = socket.endpoint.subscribe(topic)
     end)
   end
 
   defp module(%{topic: "gluon:" <> module_name}) do
-    String.to_existing_atom("Elixir.Gluon.Components.#{module_name}")
+    String.to_existing_atom("Elixir.GluonExample.Components.#{module_name}")
   end
 end
