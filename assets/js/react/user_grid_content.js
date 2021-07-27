@@ -1,4 +1,8 @@
 import React from 'react'
+import {AgGridColumn, AgGridReact} from 'ag-grid-react';
+
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 class UserGridContent extends React.Component {
   constructor(props) {
@@ -8,19 +12,16 @@ class UserGridContent extends React.Component {
   }
 
   render() {
-    const rows = this.props.users.map((user) =>
-      <tr key={user.id}>
-        <td>{user.id}</td>
-        <td>{user.email}</td>
-      </tr>
-    )
-
     return <div>
-      <h1>User Grid</h1>
-      <table>
-        <thead><tr><td>ID</td><td>Email</td></tr></thead>
-        <tbody>{rows}</tbody>
-      </table>
+      <h1>User Grid AG</h1>
+
+      <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
+           <AgGridReact
+               rowData={this.props.users}>
+               <AgGridColumn field="id" sortable={ true } filter={ true }></AgGridColumn>
+               <AgGridColumn field="email" sortable={ true } filter={ true }></AgGridColumn>
+           </AgGridReact>
+       </div>
     </div>
   }
 }
