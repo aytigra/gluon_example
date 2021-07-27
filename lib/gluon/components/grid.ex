@@ -1,5 +1,5 @@
 defmodule Gluon.Components.Grid do
-  @callback sort() :: String.t()
+  @callback sort(query :: term, params :: map) :: term
 
   defmacro __using__(opts \\ []) do
     quote do

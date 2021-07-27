@@ -8,8 +8,14 @@ defmodule GluonExample.Components.UserGrid do
   end
 
   @impl true
-  def data(_params) do
-    {:ok, data} = GluonExample.User |> GluonExample.Api.read()
+  def data(params) do
+    params
+    |> IO.inspect(label: "#{__MODULE__}:#{__ENV__.line} #{DateTime.utc_now()}", limit: :infinity)
+
+    {:ok, data} =
+      GluonExample.User
+      |> sort(params)
+      |> GluonExample.Api.read()
 
     {:ok,
      %{
@@ -18,9 +24,19 @@ defmodule GluonExample.Components.UserGrid do
      }}
   end
 
+  # "sort" => [%{"colId" => "email", "sort" => "asc"}]
   @impl true
-  def sort() do
-    ""
+  def sort(query, %{"sort" => sort_params}) do
+    sort_params
+    |> Enum.reduce(query, fn sort_param, q ->
+      Ash.Query.sort(q, [
+        {String.to_atom(sort_param["colId"]), String.to_atom(sort_param["sort"])}
+      ])
+    end)
+  end
+
+  def sort(query, _) do
+    query
   end
 
   def extract_data(data) do

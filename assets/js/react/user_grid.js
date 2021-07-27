@@ -74,14 +74,11 @@ class UserGrid extends React.Component {
 
     initDatasource();
 
-    this.state.channel.on("update", payload => { this.updateData(payload.data.data) })
+    this.state.channel.on("update", payload => { this.refreshData() })
   };
 
-  updateData(rows) {
-    rows.map((row) => {
-      let rowNode = this.gridApi.getRowNode(row.id)
-      rowNode.setData(row)
-    })
+  refreshData() {
+    this.gridApi.refreshInfiniteCache()
   }
 
   render() {
