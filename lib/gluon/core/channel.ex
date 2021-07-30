@@ -18,12 +18,12 @@ defmodule Gluon.Core.Channel do
     end
   end
 
-  intercept ["update"]
+  intercept ["data_changed"]
   @impl true
-  def handle_out("update", _msg, socket) do
+  def handle_out("data_changed", _msg, socket) do
     unless socket.assigns[:no_updates] do
       {:ok, resp} = call_module(socket, "data", %{})
-      push(socket, "update", %{data: resp})
+      push(socket, "data_changed", %{data: resp})
     end
 
     {:noreply, socket}
@@ -31,7 +31,7 @@ defmodule Gluon.Core.Channel do
 
   @impl true
   def handle_info(%Broadcast{topic: _, event: "changed", payload: payload}, socket) do
-    broadcast(socket, "update", payload)
+    broadcast(socket, "data_changed", payload)
     {:noreply, socket}
   end
 

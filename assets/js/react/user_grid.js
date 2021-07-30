@@ -74,8 +74,17 @@ class UserGrid extends React.Component {
 
     initDatasource();
 
-    this.state.channel.on("update", payload => { this.refreshData() })
+    this.state.channel.on("data_changed", _payload => { this.refreshData() })
   };
+
+  onCellValueChanged = (params) => {
+    console.log(params)
+
+    this.state.channel.push("update", params.data)
+      .receive("ok", payload => { console.log("saved")})
+      .receive("error", err => { console.log("phoenix errored", err)})
+      .receive("timeout", () => { console.log("timed out pushing")})
+  }
 
   refreshData() {
     this.gridApi.refreshInfiniteCache()
@@ -83,27 +92,25 @@ class UserGrid extends React.Component {
 
   render() {
     return (
-      <div>
-        <h1>User Grid AG</h1>
-        <div id="myGrid" className="ag-theme-alpine" style={{height: "800px"}}>
-          <AgGridReact
-            columnDefs={this.columnDefs()}
-            defaultColDef={this.defaultColDef()}
-            rowSelection={this.state.rowSelection}
-            rowModelType={this.state.rowModelType}
-            paginationPageSize={this.state.paginationPageSize}
-            cacheOverflowSize={this.state.cacheOverflowSize}
-            maxConcurrentDatasourceRequests={
-              this.state.maxConcurrentDatasourceRequests
-            }
-            infiniteInitialRowCount={this.state.infiniteInitialRowCount}
-            maxBlocksInCache={this.state.maxBlocksInCache}
-            getRowNodeId={this.state.getRowNodeId}
-            components={this.state.components}
-            onGridReady={this.onGridReady}
-            debug={true}
-          />
-        </div>
+      <div id="myGrid" className="ag-theme-alpine flex-grow">
+        <AgGridReact
+          columnDefs={this.columnDefs()}
+          defaultColDef={this.defaultColDef()}
+          rowSelection={this.state.rowSelection}
+          rowModelType={this.state.rowModelType}
+          paginationPageSize={this.state.paginationPageSize}
+          cacheOverflowSize={this.state.cacheOverflowSize}
+          maxConcurrentDatasourceRequests={
+            this.state.maxConcurrentDatasourceRequests
+          }
+          infiniteInitialRowCount={this.state.infiniteInitialRowCount}
+          maxBlocksInCache={this.state.maxBlocksInCache}
+          getRowNodeId={this.state.getRowNodeId}
+          components={this.state.components}
+          onGridReady={this.onGridReady}
+          onCellValueChanged={this.onCellValueChanged}
+          debug={true}
+        />
       </div>
     )
   }
@@ -119,12 +126,9 @@ class UserGrid extends React.Component {
         suppressMenu: true,
       },
       {
-        field: 'id',
-        filter: 'agTextColumnFilter'
-      },
-      {
         field: 'email',
-        filter: 'agTextColumnFilter'
+        filter: 'agTextColumnFilter',
+        editable: true
       }
     ]
   }
