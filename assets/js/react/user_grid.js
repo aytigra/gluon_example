@@ -1,11 +1,12 @@
 import React from 'react'
 import Gluon from '../gluon/core'
-import {AgGridColumn, AgGridReact} from 'ag-grid-react';
+import {AgGridReact} from 'ag-grid-react';
+import AgBtnCellRenderer from './ag_btn_cell_renderer'
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-class UserGrid extends React.Component {
+class UserGrid extends React.PureComponent {
   constructor(props) {
     super(props)
 
@@ -30,7 +31,10 @@ class UserGrid extends React.Component {
           } else {
             return '<img src="https://www.ag-grid.com/example-assets/loading.gif">';
           }
-        },
+        }
+      },
+      frameworkComponents: {
+        agBtnCellRenderer: AgBtnCellRenderer
       }
     }
   }
@@ -107,6 +111,7 @@ class UserGrid extends React.Component {
           maxBlocksInCache={this.state.maxBlocksInCache}
           getRowNodeId={this.state.getRowNodeId}
           components={this.state.components}
+          frameworkComponents={this.state.frameworkComponents}
           onGridReady={this.onGridReady}
           onCellValueChanged={this.onCellValueChanged}
           debug={true}
@@ -129,7 +134,18 @@ class UserGrid extends React.Component {
         field: 'email',
         filter: 'agTextColumnFilter',
         editable: true
-      }
+      },
+      {
+        headerName: 'Actions',
+        maxWidth: 100,
+        cellRenderer: 'agBtnCellRenderer',
+        cellRendererParams: {
+          text: "Show",
+          clicked: (cell) => {
+            this.props.userSelected(cell.data.id)
+          },
+        },
+      },
     ]
   }
 

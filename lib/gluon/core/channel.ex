@@ -13,8 +13,18 @@ defmodule Gluon.Core.Channel do
   @impl true
   def handle_in(method_name, payload, socket) do
     case call_module(socket, method_name, payload) do
-      {:ok, resp} -> {:reply, {:ok, resp}, socket}
-      {:error, msg} -> {:error, %{reason: msg}}
+      {:ok, resp} ->
+        socket =
+          if method_name == "data" do
+            assign(socket, %{params: payload})
+          else
+            socket
+          end
+
+        {:reply, {:ok, resp}, socket}
+
+      {:error, msg} ->
+        {:reply, {:error, %{reason: msg}}, socket}
     end
   end
 
@@ -22,7 +32,7 @@ defmodule Gluon.Core.Channel do
   @impl true
   def handle_out("data_changed", _msg, socket) do
     unless socket.assigns[:no_updates] do
-      {:ok, resp} = call_module(socket, "data", %{})
+      {:ok, resp} = call_module(socket, "data", socket.assigns.params)
       push(socket, "data_changed", %{data: resp})
     end
 
