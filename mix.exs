@@ -47,7 +47,8 @@ defmodule GluonExample.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:ash_postgres, "~> 0.40.9"},
       {:ash_json_api, "~> 0.28.4"},
-      {:ash, "~> 1.47"}
+      {:ash, "~> 1.47"},
+      {:distillery, "~> 2.1"}
     ]
   end
 
