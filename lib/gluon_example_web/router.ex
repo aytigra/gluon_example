@@ -17,6 +17,7 @@ defmodule GluonExampleWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/add_users", PageController, :add_users
   end
 
   # Other scopes may use custom stacks.

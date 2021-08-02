@@ -16,7 +16,7 @@ class UserInfo extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.state.channel.on("data_changed", payload => { this.setState({user: payload.data}) })
+    this.state.channel.on("data_changed", payload => { this.setState({user: payload.data.data}) })
     this.fetchData(this.props.user_id)
   }
 
@@ -28,7 +28,7 @@ class UserInfo extends React.PureComponent {
 
   fetchData(user_id) {
     this.state.channel.push("data", {id: user_id })
-      .receive("ok", payload => { this.setState({user: payload}) })
+      .receive("ok", payload => { this.setState({user: payload.data, attributes: payload.attributes}) })
       .receive("error", err => { console.log("phoenix errored", err)})
       .receive("timeout", () => { console.log("timed out pushing")})
   }
@@ -42,14 +42,16 @@ class UserInfo extends React.PureComponent {
     let info
 
     if (this.state.user) {
-      info = <div>
-        <div>{this.state.user.id}</div>
-        <div className="font-bold text-lg">{this.state.user.email}</div>
-      </div>
+      info = this.state.attributes.map((a) => {
+        switch (a.type) {
+          case 'uuid':
+            return <div>{this.state.user[a.name]}</div>
+          case 'string':
+            return <div className="font-bold text-lg">{this.state.user[a.name]}</div>
+        }
+      })
     } else {
-      info = <div>
-        <div>Select user.</div>
-      </div>
+      info = <div>Select user.</div>
     }
 
     return (

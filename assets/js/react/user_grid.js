@@ -16,6 +16,7 @@ class UserGrid extends React.PureComponent {
     this.state = {
       socket: socket,
       channel: channel,
+      attributes: null,
       rowSelection: 'multiple',
       rowModelType: 'infinite',
       paginationPageSize: 100,
@@ -40,8 +41,14 @@ class UserGrid extends React.PureComponent {
   }
 
   componentDidMount() {
-
-  }
+    this.state.channel.push("get_attributes", {})
+      .receive("ok", payload => {
+        console.log("callback", payload)
+        this.setState({attributes: payload})
+      })
+      .receive("error", err => { console.log("phoenix errored", err)})
+      .receive("timeout", () => { console.log("timed out pushing")})
+}
 
   componentWillUnmount() {
     Gluon.Client.disconnect(this.state.socket)
@@ -95,32 +102,71 @@ class UserGrid extends React.PureComponent {
   }
 
   render() {
-    return (
-      <div id="myGrid" className="ag-theme-alpine flex-grow">
-        <AgGridReact
-          columnDefs={this.columnDefs()}
-          defaultColDef={this.defaultColDef()}
-          rowSelection={this.state.rowSelection}
-          rowModelType={this.state.rowModelType}
-          paginationPageSize={this.state.paginationPageSize}
-          cacheOverflowSize={this.state.cacheOverflowSize}
-          maxConcurrentDatasourceRequests={
-            this.state.maxConcurrentDatasourceRequests
-          }
-          infiniteInitialRowCount={this.state.infiniteInitialRowCount}
-          maxBlocksInCache={this.state.maxBlocksInCache}
-          getRowNodeId={this.state.getRowNodeId}
-          components={this.state.components}
-          frameworkComponents={this.state.frameworkComponents}
-          onGridReady={this.onGridReady}
-          onCellValueChanged={this.onCellValueChanged}
-          debug={true}
-        />
-      </div>
+    if (this.state.attributes) {
+      return (
+        <div id="myGrid" className="ag-theme-alpine flex-grow">
+          <AgGridReact
+            columnDefs={this.columnDefs()}
+            defaultColDef={this.defaultColDef()}
+            rowSelection={this.state.rowSelection}
+            rowModelType={this.state.rowModelType}
+            paginationPageSize={this.state.paginationPageSize}
+            cacheOverflowSize={this.state.cacheOverflowSize}
+            maxConcurrentDatasourceRequests={
+              this.state.maxConcurrentDatasourceRequests
+            }
+            infiniteInitialRowCount={this.state.infiniteInitialRowCount}
+            maxBlocksInCache={this.state.maxBlocksInCache}
+            getRowNodeId={this.state.getRowNodeId}
+            components={this.state.components}
+            frameworkComponents={this.state.frameworkComponents}
+            onGridReady={this.onGridReady}
+            onCellValueChanged={this.onCellValueChanged}
+            debug={true}
+          />
+        </div>
+      )
+    } else {
+      return(<div>Fetching metadata</div>)
+    }
+  }
+
+  ashColumnDefs() {
+    return(
+      this.state.attributes.map((a) => {
+        switch (a.type) {
+          case 'uuid':
+            return {
+              headerName: a.name,
+              maxWidth: 100,
+              valueGetter: 'node.' + a.name,
+              cellRenderer: 'loadingCellRenderer',
+              sortable: false,
+              suppressMenu: true,
+            }
+          case 'string':
+            return {
+              field: a.name,
+              filter: 'agTextColumnFilter',
+              editable: true
+            }
+        }
+      }).concat([{
+        headerName: 'Actions',
+        maxWidth: 100,
+        cellRenderer: 'agBtnCellRenderer',
+        cellRendererParams: {
+          text: "Show",
+          clicked: (cell) => {
+            this.props.userSelected(cell.data.id)
+          },
+        },
+      }])
     )
   }
 
   columnDefs() {
+    return this.ashColumnDefs()
     return [
       {
         headerName: 'ID',

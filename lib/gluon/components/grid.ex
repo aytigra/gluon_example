@@ -22,15 +22,4 @@ defmodule Gluon.Components.Grid do
   def sort(query, _) do
     query
   end
-
-  def extract_attributes(resource) do
-    resource
-    |> Ash.Resource.Info.attributes()
-    |> Enum.reduce(%{}, fn a, acc ->
-      type =
-        a.type |> to_string() |> String.trim_leading("Elixir.Ash.Type.") |> Macro.underscore()
-
-      Map.put(acc, a.name, type)
-    end)
-  end
 end

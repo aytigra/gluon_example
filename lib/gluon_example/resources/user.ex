@@ -7,6 +7,10 @@ defmodule GluonExample.User do
   end
 
   attributes do
+    uuid_primary_key(:id)
+
+    attribute(:name, :string)
+
     attribute(:email, :string,
       allow_nil?: false,
       constraints: [
@@ -14,8 +18,6 @@ defmodule GluonExample.User do
         match: ~r/^[\w.!#$%&’*+\-\/=?\^`{|}~]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$/i
       ]
     )
-
-    uuid_primary_key(:id)
   end
 
   relationships do

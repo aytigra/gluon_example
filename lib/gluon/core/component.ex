@@ -12,4 +12,15 @@ defmodule Gluon.Component do
       import unquote(__MODULE__)
     end
   end
+
+  def extract_attributes(resource) do
+    resource
+    |> Ash.Resource.Info.attributes()
+    |> Enum.map(fn a ->
+      type =
+        a.type |> to_string() |> String.trim_leading("Elixir.Ash.Type.") |> Macro.underscore()
+
+      %{name: a.name, type: type}
+    end)
+  end
 end

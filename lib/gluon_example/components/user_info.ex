@@ -17,7 +17,16 @@ defmodule GluonExample.Components.UserInfo do
           GluonExample.User
           |> GluonExample.Api.get(user_id)
 
-        {:ok, %{id: user.id, email: user.email}}
+        attributes = GluonExample.User |> extract_attributes()
+
+        {:ok,
+         %{
+           data:
+             Enum.reduce(attributes, %{}, fn a, acc ->
+               Map.put(acc, a.name, Map.get(user, a.name))
+             end),
+           attributes: attributes
+         }}
     end
   end
 end
