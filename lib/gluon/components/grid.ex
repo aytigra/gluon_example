@@ -10,6 +10,10 @@ defmodule Gluon.Components.Grid do
     end
   end
 
+  def sort(query, %{"sort" => []}) do
+    Ash.Query.sort(query, [{:id, :asc}])
+  end
+
   def sort(query, %{"sort" => sort_params}) do
     sort_params
     |> Enum.reduce(query, fn sort_param, q ->

@@ -89,13 +89,18 @@ class UserGrid extends React.PureComponent {
   };
 
   onCellValueChanged = (params) => {
-    console.log(params)
-
     this.state.channel.push("update", params.data)
       .receive("ok", payload => { console.log("saved")})
       .receive("error", err => { console.log("phoenix errored", err)})
       .receive("timeout", () => { console.log("timed out pushing")})
   }
+
+  onRowSelected = (event) => {
+    if (event.node.isSelected()) {
+      this.props.userSelected(event.node.data.id)
+    }
+  }
+
 
   refreshData() {
     this.gridApi.refreshInfiniteCache()
@@ -123,6 +128,8 @@ class UserGrid extends React.PureComponent {
             onGridReady={this.onGridReady}
             onCellValueChanged={this.onCellValueChanged}
             debug={true}
+            rowSelection={"single"}
+            onRowSelected={this.onRowSelected}
           />
         </div>
       )
@@ -151,17 +158,7 @@ class UserGrid extends React.PureComponent {
               editable: true
             }
         }
-      }).concat([{
-        headerName: 'Actions',
-        maxWidth: 100,
-        cellRenderer: 'agBtnCellRenderer',
-        cellRendererParams: {
-          text: "Show",
-          clicked: (cell) => {
-            this.props.userSelected(cell.data.id)
-          },
-        },
-      }])
+      })
     )
   }
 
@@ -200,8 +197,7 @@ class UserGrid extends React.PureComponent {
       flex: 1,
       minWidth: 150,
       sortable: true,
-      resizable: true,
-      floatingFilter: true,
+      resizable: true
     }
   }
 }

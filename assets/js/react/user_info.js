@@ -45,9 +45,9 @@ class UserInfo extends React.PureComponent {
       info = this.state.attributes.map((a) => {
         switch (a.type) {
           case 'uuid':
-            return <div>{this.state.user[a.name]}</div>
+            return <div key={a.name}>{this.state.user[a.name]}</div>
           case 'string':
-            return <div className="font-bold text-lg">{this.state.user[a.name]}</div>
+            return <div key={a.name} className="font-bold text-lg">{this.state.user[a.name]}</div>
         }
       })
     } else {
